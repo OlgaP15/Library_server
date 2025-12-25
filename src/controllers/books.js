@@ -20,7 +20,7 @@ exports.getBookById = async (req, res, next) => {
       "firstName lastName username"
     );
     if (!book) {
-      return res.status(404).json({ error: "Book not found" });
+      return res.status(404).json({ error: "Книга не найдена" });
     }
     res.json(book);
   } catch (error) {
@@ -60,7 +60,7 @@ exports.updateBook = async (req, res, next) => {
     );
 
     if (!updatedBook) {
-      return res.status(404).json({ error: "Book not found" });
+      return res.status(404).json({ error: "Книга не найдена" });
     }
 
     res.json(updatedBook);
@@ -74,7 +74,7 @@ exports.deleteBook = async (req, res, next) => {
     const deletedBook = await Book.findByIdAndDelete(req.params.id);
 
     if (!deletedBook) {
-      return res.status(404).json({ error: "Book not found" });
+      return res.status(404).json({ error: "Книга не найдена" });
     }
 
     res.status(204).send();
@@ -89,22 +89,22 @@ exports.borrowBook = async (req, res, next) => {
     const { userId } = req.query;
 
     if (!userId) {
-      return res.status(400).json({ error: "User ID is required" });
+      return res.status(400).json({ error: "Требуется ID пользователя" });
     }
 
     const book = await Book.findById(bookId);
     const user = await User.findById(userId);
 
     if (!book) {
-      return res.status(404).json({ error: "Book not found" });
+      return res.status(404).json({ error: "Книга не найдена" });
     }
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: "Пользователь не найден" });
     }
 
     if (!book.isAvailable) {
-      return res.status(400).json({ error: "Book is already borrowed" });
+      return res.status(400).json({ error: "Книга уже забронирована" });
     }
 
     book.isAvailable = false;
@@ -112,7 +112,7 @@ exports.borrowBook = async (req, res, next) => {
     await book.save();
 
     res.json({
-      message: "Book borrowed successfully",
+      message: "Книга, успешно получена напрокат",
       book,
     });
   } catch (error) {
@@ -126,23 +126,23 @@ exports.returnBook = async (req, res, next) => {
     const { userId } = req.query;
 
     if (!userId) {
-      return res.status(400).json({ error: "User ID is required" });
+      return res.status(400).json({ error: "Требуется ID пользователя" });
     }
 
     const book = await Book.findById(bookId);
 
     if (!book) {
-      return res.status(404).json({ error: "Book not found" });
+      return res.status(404).json({ error: "Книга не найдена" });
     }
 
     if (book.isAvailable) {
-      return res.status(400).json({ error: "Book is not borrowed" });
+      return res.status(400).json({ error: "Книга не заимствована" });
     }
 
     if (book.borrowedBy.toString() !== userId) {
       return res
         .status(400)
-        .json({ error: "This book was not borrowed by this user" });
+        .json({ error: "Этот пользователь не брал книгу напрокат" });
     }
 
     book.isAvailable = true;
@@ -150,7 +150,7 @@ exports.returnBook = async (req, res, next) => {
     await book.save();
 
     res.json({
-      message: "Book returned successfully",
+      message: "Книга успешно возвращена",
       book,
     });
   } catch (error) {
