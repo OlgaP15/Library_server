@@ -58,7 +58,6 @@ exports.updateBook = async (req, res, next) => {
       },
       { new: true, runValidators: true }
     );
-
     if (!updatedBook) {
       return res.status(404).json({ error: "Книга не найдена" });
     }
